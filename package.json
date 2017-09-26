@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run lint && npm run test",
+    "lint": "tslint -p .",
     "dev": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ls dist | xargs -I {} node dist/{}"
   },
   "author": "",
   "license": "ISC",
