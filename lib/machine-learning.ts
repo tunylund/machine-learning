@@ -82,12 +82,11 @@ assert.equal(meanErrorCost([[3, 4],
                             [4, 3],
                             [0, 1]], linearRegressionHypothesis(0, 1)), 0.5)
 
-const set = [[0, 1, 2, 3],
-             [0, 1, 2, 3],
-             [0, 1, 2, 3],
-             [0, 1, 2, 3]]
-
-assert.equal(meanErrorCost(set, linearRegressionHypothesis(0, 1, 2, 3)), 12.5)
+assert.equal(meanErrorCost(
+  [[0, 1, 2, 3],
+   [0, 1, 2, 3],
+   [0, 1, 2, 3],
+   [0, 1, 2, 3]], linearRegressionHypothesis(0, 1, 2, 3)), 12.5)
 
 const linear = [[1, 1],
                 [2, 2],
