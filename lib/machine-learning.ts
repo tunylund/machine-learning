@@ -1,26 +1,30 @@
 import * as assert from 'assert'
+import { vector } from './matrix'
 
 export interface Hypothesis {
-  (x: number): number
+  (x: number[]): number
 }
 
 export interface CostFunction {
   (x: number, y: number): number
 }
 
-function sum (data: number[][], fn: CostFunction): number {
-  return data
-    .map((x: number[]) => fn(x[0], x[1]))
-    .reduce((sum: number, value: number) => sum += value, 0)
+function add (a: number, b: number) {
+  return a + b
 }
 
 export function meanErrorCost (data: number[][], hypothesis: Hypothesis) {
-  return (1 / (2 * data.length)) *
-    sum(data, (x: number, y: number) => Math.pow(hypothesis(x) - y, 2))
+  return (1 / (2 * data.length)) * data
+    .map(x => Math.pow(hypothesis(x.slice(0, -1)) - x[x.length - 1], 2))
+    .reduce(add, 0)
 }
 
-export function linearRegressionHypothesis (θj: number, θi: number): Hypothesis {
-  return (x: number) => θj + θi * x
+export function linearRegressionHypothesis (...θ: number[]): Hypothesis {
+  const theta = vector(θ)
+  return (x: number[]) => theta
+    .transpose()
+    .multiply(vector([1].concat(x)))
+    .reduce(add, 0)
 }
 
 // function gradientDescent (
@@ -50,8 +54,13 @@ function linearRegressionGradientDescent (
 
   const hypothesis = linearRegressionHypothesis(θj, θi)
   const m = data.length
-  const a = θj - learningRate * 1 / m * sum(data, (x, y) => hypothesis(x) - y)
-  const b = θi - learningRate * 1 / m * sum(data, (x, y) => (hypothesis(x) - y) * x)
+  const a = θj - learningRate * 1 / m * data
+    .map(x => hypothesis(x.slice(0, -1)) - x[x.length - 1])
+    .reduce(add, 0)
+
+  const b = θi - learningRate * 1 / m * data
+    .map(x => (hypothesis(x.slice(0, -1)) - x[x.length - 1]) * x.reduce(add, 0))
+    .reduce(add, 0)
 
   if (originalθj - a < θj - a) {
     throw new Error(`No convergence found from ${originalθj}, ${originalθi}`)
@@ -64,19 +73,21 @@ function linearRegressionGradientDescent (
   return linearRegressionGradientDescent(a, b, data, learningRate, originalθj, originalθi)
 }
 
-assert.equal(sum([], (x, y) => x + y), 0, 'sum of [] should be 0')
-assert.equal(sum([[1, 2]], (x, y) => x + y), 3, 'sum of [1, 2] should be 3')
+assert(isNaN(meanErrorCost([], y => y.reduce(add, 0))), 'meanError of [] should be NaN')
+assert.equal(meanErrorCost([[1, 1]], y => y.reduce(add, 0)), 0)
+assert.equal(meanErrorCost([[1, 1]], y => y.reduce(add, 0) * 2), 0.5)
 
-assert(isNaN(meanErrorCost([], y => y)), 'meanError of [] should be NaN')
-assert.equal(meanErrorCost([[1, 1]], y => y), 0)
-assert.equal(meanErrorCost([[1, 1]], y => y * 2), 0.5)
+assert.equal(meanErrorCost([[3, 4],
+                            [2, 1],
+                            [4, 3],
+                            [0, 1]], linearRegressionHypothesis(0, 1)), 0.5)
 
-const set = [[3, 4],
-             [2, 1],
-             [4, 3],
-             [0, 1]]
+const set = [[0, 1, 2, 3],
+             [0, 1, 2, 3],
+             [0, 1, 2, 3],
+             [0, 1, 2, 3]]
 
-assert.equal(meanErrorCost(set, linearRegressionHypothesis(0, 1)), 0.5)
+assert.equal(meanErrorCost(set, linearRegressionHypothesis(0, 1, 2, 3)), 12.5)
 
 const linear = [[1, 1],
                 [2, 2],

@@ -31,6 +31,10 @@ class Matrix {
       new Array(ySize * xSize).fill(value))
   }
 
+  static vector (values: number[]) {
+    return new Matrix(values.length, 1, values)
+  }
+
   get (y: number, x: number): number {
     return this.values[y * this.xSize + x]
   }
@@ -167,12 +171,13 @@ class Matrix {
 
 }
 
+const vector = Matrix.vector
 const matrix = Matrix.builder
 const identity = Matrix.identity
 const scalar = Matrix.scalar
 
 export default Matrix
-export { matrix, identity, scalar }
+export { vector, matrix, identity, scalar }
 
 // What's all this then?
 // Because it's a javascript module
@@ -224,6 +229,10 @@ assert.deepEqual(identity(3), matrix(3, 3)(1, 0, 0,
 assert.deepEqual(scalar(3, 3, 1), matrix(3, 3)(1, 1, 1,
                                                1, 1, 1,
                                                1, 1, 1))
+
+assert.deepEqual(vector([1, 2, 3]), matrix(3, 1)(1,
+                                                 2,
+                                                 3))
 
 assert.deepEqual(m32.multiply(2), matrix(3, 2)(2, 4,
                                                6, 8,
