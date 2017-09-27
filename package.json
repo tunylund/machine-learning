@@ -4,17 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && npm run lint && npm run test",
+    "build": "echo '\nbuilding...' && tsc && npm run lint && npm run test && npm run perf",
     "lint": "tslint -p .",
     "test": "ls dist | grep -v '-perf.js' | xargs -I {} node dist/{}",
     "perf": "ls dist | grep '-perf.js' | xargs -I {} node dist/{}",
-    "dev": "fswatch -o lib/* | xargs -n1 -I{} npm run build"
+    "dev": "fswatch -o lib/* | xargs -n1 -I{} npm run build --silent"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^8.0.31",
-    "mini-benchmark": "^1.0.0",
+    "mini-benchmark": "^1.1.0",
     "tslint": "^5.7.0",
     "tslint-config-standard": "^6.0.1",
     "typescript": "^2.5.2"
