@@ -6,13 +6,15 @@
   "scripts": {
     "build": "tsc && npm run lint && npm run test",
     "lint": "tslint -p .",
-    "test": "ls dist | xargs -I {} node dist/{}",
+    "test": "ls dist | grep -v '-perf.js' | xargs -I {} node dist/{}",
+    "perf": "ls dist | grep '-perf.js' | xargs -I {} node dist/{}",
     "dev": "fswatch -o lib/* | xargs -n1 -I{} npm run build"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^8.0.31",
+    "mini-benchmark": "^1.0.0",
     "tslint": "^5.7.0",
     "tslint-config-standard": "^6.0.1",
     "typescript": "^2.5.2"

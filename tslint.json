@@ -4,6 +4,8 @@
         "tslint-config-standard"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+      "no-empty": false
+    },
     "rulesDirectory": []
 }
